@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITIZ+ — Instituto Tecnológico de Iztapalapa</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div id="app">
+
+    <div id="modalOverlay" class="modal-overlay hidden" aria-hidden="true">
+      <div
+        id="modalCard"
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div id="modalHeader" class="modal-header"></div>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="nav-inner">
+
+        <div class="brand" aria-label="ITIZ+">
+          <div class="brand-mark">IT</div>
+
+          <div>
+            <div class="brand-name">
+              ITIZ<span>+</span>
+            </div>
+
+            <div class="brand-subtitle">
+              INST. TEC. IZTAPALAPA
+            </div>
+          </div>
+        </div>
+
+        <nav class="nav-links" aria-label="Navegación principal">
+          <a href="#inicio">Inicio</a>
+          <a href="#carreras">Carreras</a>
+          <a href="#tramites">Trámites</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+
+        <div class="login-wrap">
+          <a
+            class="login-button"
+            href="login.html"
+            aria-label="Ir a iniciar sesión"
+          >
+            <span class="user-icon" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
+
+            <span class="login-label">
+              Iniciar sesión
+            </span>
+          </a>
+        </div>
+
+      </div>
+    </header>
+
+    <section id="inicio" class="hero">
+      <div class="hero-glow"></div>
+
+      <div class="hero-content">
+
+        <div class="hero-kicker">
+          Instituto Tecnológico de Iztapalapa
+        </div>
+
+        <h1>
+          Formando el talento
+          <br />
+          <span>tecnológico</span> del futuro
+        </h1>
+
+        <p>
+          Tres carreras de excelencia · Iztapalapa, CDMX
+        </p>
+
+        <div class="career-pills" aria-label="Carreras">
+          <span>Ing. en Sistemas</span>
+          <span>Mecatrónica</span>
+          <span>Gestión Empresarial</span>
+        </div>
+
+      </div>
+    </section>
+
+    <main class="main-content">
+
+      <section id="carreras" class="carousel-section">
+
+        <div class="carousel-row">
+
+          <button
+            id="prevCard"
+            class="circle-button"
+            type="button"
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+
+          <div
+            id="carouselGrid"
+            class="carousel-grid"
+          ></div>
+
+          <button
+            id="nextCard"
+            class="circle-button"
+            type="button"
+            aria-label="Siguiente"
+          >
+            ›
+          </button>
+
+        </div>
+
+        <div
+          id="carouselDots"
+          class="carousel-dots"
+          aria-label="Posición del carrusel"
+        ></div>
+
+      </section>
+
+      <section id="tramites" class="search-section">
+
+        <div class="search-row">
+
+          <div class="search-box-wrap">
+
+            <svg
+              class="search-icon"
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+
+            <input
+              id="mapSearch"
+              type="search"
+              placeholder="Buscar en el mapa…"
+              autocomplete="off"
+            />
+
+          </div>
+
+          <button
+            id="clearSearch"
+            class="clear-button hidden"
+            type="button"
+          >
+            Limpiar
+          </button>
+
+          <div
+            id="resultCount"
+            class="result-count"
+          >
+            19 ubicaciones
+          </div>
+
+        </div>
+
+        <div
+          id="legend"
+          class="legend"
+        ></div>
+
+      </section>
+
+      <section id="contacto" class="map-section">
+
+        <div class="section-heading-row">
+
+          <h2>
+            🗺️ Mapa del Campus ITIZ+
+          </h2>
+
+          <div class="zoom-controls">
+
+            <span id="zoomLabel">
+              Zoom 100%
+            </span>
+
+            <button
+              id="zoomOut"
+              class="small-button"
+              type="button"
+              aria-label="Alejar"
+            >
+              −
+            </button>
+
+            <button
+              id="zoomIn"
+              class="small-button"
+              type="button"
+              aria-label="Acercar"
+            >
+              +
+            </button>
+
+            <button
+              id="zoomReset"
+              class="reset-button hidden"
+              type="button"
+            >
+              Reset
+            </button>
+
+            <span class="touch-hint">
+              Toca para info
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="map-card">
+
+          <div
+            id="mapStage"
+            class="map-stage"
+            aria-label="Mapa interactivo del campus"
+          >
+
+            <div
+              id="mapTransform"
+              class="map-transform"
+            >
+
+              <img
+                id="campusMap"
+                src="mapa.png"
+                alt="Plano del campus ITIZ+"
+                draggable="false"
+              />
+
+              <div id="mapPins"></div>
+
+            </div>
+
+            <div
+              id="mapFallback"
+              class="map-fallback hidden"
+            >
+              No se encontró
+              <strong>mapa.png</strong>.
+              Coloca el archivo
+              <strong>mapa.png</strong>
+              en la misma carpeta que
+              <strong>index.html</strong>.
+            </div>
+
+          </div>
+
+          <div
+            id="infoPanel"
+            class="info-panel"
+          ></div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      © 2026 Instituto Tecnológico de Iztapalapa · ITIZ+ · Todos los derechos reservados
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

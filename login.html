@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d3b6e" />
+  <title>Acceso — ITIZ+</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-shell" aria-labelledby="authTitle">
+      <a class="auth-brand" href="index.html" aria-label="Volver a ITIZ+">
+        <div class="brand-mark">IT</div>
+        <div>
+          <div class="brand-name">ITIZ<span>+</span></div>
+          <div class="brand-subtitle">INST. TEC. IZTAPALAPA</div>
+        </div>
+      </a>
+
+      <div class="auth-card">
+        <div class="auth-icon" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+
+        <h1 id="authTitle">Bienvenido a ITIZ<span>+</span></h1>
+        <p class="auth-copy" id="authSubtitle">Inicia sesión con tu número de control o correo institucional.</p>
+
+        <div class="auth-tabs" role="tablist" aria-label="Acceso a la cuenta">
+          <button id="loginTab" class="auth-tab active" type="button" role="tab" aria-selected="true" aria-controls="loginPanel">Iniciar sesión</button>
+          <button id="registerTab" class="auth-tab" type="button" role="tab" aria-selected="false" aria-controls="registerPanel">Crear cuenta</button>
+        </div>
+
+        <section id="loginPanel" class="auth-panel active" role="tabpanel" aria-labelledby="loginTab">
+          <form id="loginForm" novalidate>
+            <div class="field-group">
+              <label for="loginIdentifier">Número de control o correo</label>
+              <input
+                id="loginIdentifier"
+                name="identifier"
+                type="text"
+                autocomplete="username"
+                placeholder="Ej. 22101234 o alumno@correo.com"
+                required
+              />
+              <small class="field-error" id="loginIdentifierError"></small>
+            </div>
+
+            <div class="field-group">
+              <label for="loginPassword">Contraseña</label>
+              <div class="password-wrap">
+                <input
+                  id="loginPassword"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Ingresa tu contraseña"
+                  required
+                />
+                <button class="password-toggle" type="button" data-toggle-password="loginPassword">Mostrar</button>
+              </div>
+              <small class="field-error" id="loginPasswordError"></small>
+            </div>
+
+            <button id="loginSubmit" class="submit-button" type="submit">Entrar</button>
+            <div id="loginMessage" class="auth-message" aria-live="polite"></div>
+          </form>
+
+          <div class="recovery-row">
+            <span>¿Olvidaste tu contraseña?</span>
+            <button id="recoverButton" type="button">Recuperar</button>
+          </div>
+        </section>
+
+        <section id="registerPanel" class="auth-panel" role="tabpanel" aria-labelledby="registerTab" hidden>
+          <form id="registerForm" novalidate>
+            <div class="form-grid two-columns">
+              <div class="field-group">
+                <label for="registerName">Nombre(s)</label>
+                <input id="registerName" name="nombre" type="text" autocomplete="given-name" placeholder="Ej. Juan Carlos" required />
+                <small class="field-error" id="registerNameError"></small>
+              </div>
+
+              <div class="field-group">
+                <label for="registerMatricula">Número de control</label>
+                <input id="registerMatricula" name="matricula" type="text" inputmode="numeric" autocomplete="username" placeholder="Ej. 22101234" required />
+                <small class="field-error" id="registerMatriculaError"></small>
+              </div>
+            </div>
+
+            <div class="form-grid two-columns">
+              <div class="field-group">
+                <label for="registerApellidoPaterno">Apellido paterno</label>
+                <input id="registerApellidoPaterno" name="apellido_paterno" type="text" autocomplete="family-name" placeholder="Ej. Becerra" required />
+                <small class="field-error" id="registerApellidoPaternoError"></small>
+              </div>
+
+              <div class="field-group">
+                <label for="registerApellidoMaterno">Apellido materno</label>
+                <input id="registerApellidoMaterno" name="apellido_materno" type="text" autocomplete="family-name" placeholder="Ej. López" required />
+                <small class="field-error" id="registerApellidoMaternoError"></small>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="registerEmail">Correo electrónico</label>
+              <input id="registerEmail" name="correo" type="email" autocomplete="email" placeholder="Ej. alumno@correo.com" required />
+              <small class="field-error" id="registerEmailError"></small>
+            </div>
+
+            <div class="form-grid two-columns">
+              <div class="field-group">
+                <label for="registerCareer">Carrera</label>
+                <select id="registerCareer" name="carrera_id" required>
+                  <option value="">Cargando carreras…</option>
+                </select>
+                <small class="field-error" id="registerCareerError"></small>
+              </div>
+
+              <div class="field-group">
+                <label for="registerSemester">Semestre actual</label>
+                <select id="registerSemester" name="semestre_actual" required>
+                  <option value="">Selecciona</option>
+                  <option value="1">1.º semestre</option>
+                  <option value="2">2.º semestre</option>
+                  <option value="3">3.º semestre</option>
+                  <option value="4">4.º semestre</option>
+                  <option value="5">5.º semestre</option>
+                  <option value="6">6.º semestre</option>
+                  <option value="7">7.º semestre</option>
+                  <option value="8">8.º semestre</option>
+                  <option value="9">9.º semestre</option>
+                  <option value="10">10.º semestre</option>
+                  <option value="11">11.º semestre</option>
+                  <option value="12">12.º semestre</option>
+                </select>
+                <small class="field-error" id="registerSemesterError"></small>
+              </div>
+            </div>
+
+            <div class="form-grid two-columns">
+              <div class="field-group">
+                <label for="registerPassword">Contraseña</label>
+                <div class="password-wrap">
+                  <input id="registerPassword" name="password" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres" minlength="6" required />
+                  <button class="password-toggle" type="button" data-toggle-password="registerPassword">Mostrar</button>
+                </div>
+                <small class="field-error" id="registerPasswordError"></small>
+              </div>
+
+              <div class="field-group">
+                <label for="registerPasswordConfirm">Confirmar contraseña</label>
+                <input id="registerPasswordConfirm" name="password_confirm" type="password" autocomplete="new-password" placeholder="Repite la contraseña" minlength="6" required />
+                <small class="field-error" id="registerPasswordConfirmError"></small>
+              </div>
+            </div>
+
+            <button id="registerSubmit" class="submit-button" type="submit">Crear cuenta</button>
+            <div id="registerMessage" class="auth-message" aria-live="polite"></div>
+          </form>
+
+          <p class="register-note">
+            La cuenta se crea mediante Supabase Auth. Si el correo requiere confirmación, recibirás un enlace antes de poder iniciar sesión.
+          </p>
+        </section>
+
+        <button id="logoutButton" class="secondary-action hidden" type="button">Cerrar sesión actual</button>
+        <a class="back-link" href="index.html">← Volver al inicio</a>
+      </div>
+
+      <p class="auth-footer">© 2026 Instituto Tecnológico de Iztapalapa · ITIZ+</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="login.js"></script>
+</body>
+</html>
