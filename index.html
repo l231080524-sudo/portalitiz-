@@ -1,309 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ITIZ+ — Instituto Tecnológico de Iztapalapa</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102d52">
+  <meta name="description" content="Comunidad estudiantil ITIZ+: carreras, actividades, idiomas e información para tu vida en el campus.">
+  <title>ITIZ+ | Comunidad estudiantil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-shell.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
-
 <body>
-  <div id="app">
-
-    <div id="modalOverlay" class="modal-overlay hidden" aria-hidden="true">
-      <div
-        id="modalCard"
-        class="modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalTitle"
-      >
-        <div id="modalHeader" class="modal-header"></div>
-        <div id="modalBody" class="modal-body"></div>
+  <header class="site-header">
+    <nav class="navbar page-width" aria-label="Navegación principal">
+      <a class="brand" href="index.html" aria-label="ITIZ+ inicio"><span class="brand-mark">IT</span><span><strong>ITIZ<span class="brand-plus">+</span></strong><small>INSTITUTO TECNOLÓGICO DE IZTAPALAPA</small></span></a>
+      <div class="nav-links">
+        <a class="is-current" href="index.html">Inicio</a>
+        <a href="#oferta">Oferta educativa</a>
+        <a href="#actividades">Actividades</a>
+        <a href="mapa.html">Mapa del campus</a>
       </div>
+      <div class="nav-actions">
+        <button class="icon-button theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema"><i data-lucide="moon"></i></button>
+        <a class="account-link" href="login.html"><span class="avatar" data-avatar>IT</span><span data-account-label>Iniciar sesión</span></a>
+        <button class="icon-button menu-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </nav>
+    <div class="mobile-nav page-width" hidden>
+      <a href="index.html">Inicio</a><a href="#oferta">Oferta educativa</a><a href="#actividades">Actividades</a><a href="mapa.html">Mapa del campus</a>
     </div>
+  </header>
 
-    <!-- NAVBAR -->
-    <header class="navbar">
-      <div class="nav-inner">
-
-        <div class="brand" aria-label="ITIZ+">
-          <div class="brand-mark">IT</div>
-
-          <div>
-            <div class="brand-name">
-              ITIZ<span>+</span>
-            </div>
-
-            <div class="brand-subtitle">
-              INST. TEC. IZTAPALAPA
-            </div>
-          </div>
-        </div>
-
-        <nav class="nav-links" aria-label="Navegación principal">
-          <a href="#inicio">Inicio</a>
-          <a href="#carreras">Carreras</a>
-          <a href="#tramites">Trámites</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-
-        <div class="login-wrap">
-          <a
-            class="login-button"
-            href="login.html"
-            aria-label="Ir a iniciar sesión"
-          >
-            <span class="user-icon" aria-hidden="true">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </span>
-
-            <span class="login-label">
-              Iniciar sesión
-            </span>
-          </a>
-        </div>
-
+  <main>
+    <section class="hero page-width">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="status-dot"></span> TU CAMPUS, MÁS CERCA</span>
+        <h1>Todo lo que necesitas para avanzar <span>está aquí.</span></h1>
+        <p>Explora tu comunidad, encuentra tu próximo reto y aprovecha cada espacio del Instituto Tecnológico de Iztapalapa.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#oferta">Explorar oferta <i data-lucide="arrow-right"></i></a><a class="button button-glass" href="mapa.html"><i data-lucide="map"></i> Explorar campus</a></div>
+        <div class="hero-proof"><div class="avatar-stack"><span>IT</span><span>+</span><span>IZ</span></div><span>Una comunidad que transforma su futuro</span></div>
       </div>
-    </header>
-
-    <section id="inicio" class="hero">
-      <div class="hero-glow"></div>
-
-      <div class="hero-content">
-
-        <div class="hero-kicker">
-          Instituto Tecnológico de Iztapalapa
-        </div>
-
-        <h1>
-          Formando el talento
-          <br />
-          <span>tecnológico</span> del futuro
-        </h1>
-
-        <p>
-          Tres carreras de excelencia · Iztapalapa, CDMX
-        </p>
-
-        <div class="career-pills" aria-label="Carreras">
-          <span>Ing. en Sistemas</span>
-          <span>Mecatrónica</span>
-          <span>Gestión Empresarial</span>
-        </div>
-
+      <div class="hero-art" aria-label="Ilustración de estudiantes en el campus">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="hero-stat"><i data-lucide="sparkles"></i><span><strong>Tu siguiente paso</strong><small>empieza hoy</small></span></div>
+        <div class="hero-monogram">ITIZ<span>+</span></div>
+        <div class="hero-bottom-card"><span class="hero-icon"><i data-lucide="graduation-cap"></i></span><span><strong>Aprende. Crea. Trasciende.</strong><small>Instituto Tecnológico de Iztapalapa</small></span></div>
       </div>
     </section>
 
-    <main class="main-content">
+    <section class="quick-links page-width" aria-label="Accesos rápidos">
+      <a class="quick-link glass-card" href="#oferta"><span class="quick-icon icon-blue"><i data-lucide="book-open"></i></span><span><strong>Oferta educativa</strong><small>Encuentra tu camino</small></span><i class="quick-arrow" data-lucide="arrow-up-right"></i></a>
+      <a class="quick-link glass-card" href="#actividades"><span class="quick-icon icon-green"><i data-lucide="trophy"></i></span><span><strong>Créditos complementarios</strong><small>Aprende fuera del aula</small></span><i class="quick-arrow" data-lucide="arrow-up-right"></i></a>
+      <a class="quick-link glass-card" href="mapa.html"><span class="quick-icon icon-orange"><i data-lucide="map-pin"></i></span><span><strong>Mapa del campus</strong><small>Ubícate y llega fácil</small></span><i class="quick-arrow" data-lucide="arrow-up-right"></i></a>
+    </section>
 
-      <section id="carreras" class="carousel-section">
+    <section class="content-section page-width" id="oferta">
+      <div class="section-heading"><div><span class="eyebrow eyebrow-dark">CRECE A TU MANERA</span><h2>Descubre lo que te mueve</h2><p>Formación, experiencias y herramientas para construir tu futuro.</p></div><a class="text-link" href="login.html">Únete a ITIZ+ <i data-lucide="arrow-up-right"></i></a></div>
+      <div class="offer-grid">
+        <article class="offer-card offer-systems" data-detail="systems" tabindex="0" role="button" aria-label="Más información sobre Ingeniería en Sistemas Computacionales">
+          <div class="offer-top"><span class="offer-icon"><i data-lucide="code-2"></i></span><span class="offer-label">INGENIERÍA</span></div><div><h3>Sistemas Computacionales</h3><p>Software, datos e ideas que conectan al mundo.</p></div><span class="offer-foot">Explorar carrera <i data-lucide="arrow-up-right"></i></span>
+        </article>
+        <article class="offer-card offer-mechatronics" data-detail="mechatronics" tabindex="0" role="button" aria-label="Más información sobre Ingeniería en Mecatrónica">
+          <div class="offer-top"><span class="offer-icon"><i data-lucide="cpu"></i></span><span class="offer-label">INGENIERÍA</span></div><div><h3>Ingeniería Mecatrónica</h3><p>Diseña soluciones inteligentes para los retos reales.</p></div><span class="offer-foot">Explorar carrera <i data-lucide="arrow-up-right"></i></span>
+        </article>
+        <article class="offer-card offer-business" data-detail="business" tabindex="0" role="button" aria-label="Más información sobre Gestión Empresarial">
+          <div class="offer-top"><span class="offer-icon"><i data-lucide="chart-no-axes-combined"></i></span><span class="offer-label">LICENCIATURA</span></div><div><h3>Gestión Empresarial</h3><p>Impulsa proyectos, organizaciones y nuevas ideas.</p></div><span class="offer-foot">Explorar carrera <i data-lucide="arrow-up-right"></i></span>
+        </article>
+      </div>
+    </section>
 
-        <div class="carousel-row">
+    <section class="language-banner page-width">
+      <div class="language-symbol"><i data-lucide="languages"></i></div><div class="language-copy"><span class="eyebrow">AMPLÍA TUS HORIZONTES</span><h2>Un nuevo idioma. Un mundo de posibilidades.</h2><p>Consulta cursos de inglés y opciones para avanzar a tu ritmo.</p></div><a class="button button-light" href="#actividades">Conocer idiomas <i data-lucide="arrow-right"></i></a>
+    </section>
 
-          <button
-            id="prevCard"
-            class="circle-button"
-            type="button"
-            aria-label="Anterior"
-          >
-            ‹
-          </button>
+    <section class="content-section page-width" id="actividades">
+      <div class="section-heading"><div><span class="eyebrow eyebrow-dark">MÁS ALLÁ DEL AULA</span><h2>Haz espacio para lo que te inspira</h2><p>Actividades para descubrir talentos, sumar créditos y conectar con tu comunidad.</p></div></div>
+      <div class="activity-grid">
+        <article class="activity-card glass-card"><span class="activity-icon activity-art"><i data-lucide="palette"></i></span><div><span class="activity-kicker">EXPRESIÓN Y CREATIVIDAD</span><h3>Actividades culturales</h3><p>Arte, fotografía, música y experiencias para explorar nuevas formas de expresarte.</p><a href="login.html" class="text-link">Consultar opciones <i data-lucide="arrow-right"></i></a></div></article>
+        <article class="activity-card glass-card"><span class="activity-icon activity-sport"><i data-lucide="volleyball"></i></span><div><span class="activity-kicker">ENERGÍA Y EQUIPO</span><h3>Actividades deportivas</h3><p>Encuentra tu equipo, mantente en movimiento y suma experiencias a tu trayectoria.</p><a href="login.html" class="text-link">Consultar opciones <i data-lucide="arrow-right"></i></a></div></article>
+        <article class="activity-card glass-card"><span class="activity-icon activity-enroll"><i data-lucide="clipboard-check"></i></span><div><span class="activity-kicker">DA EL SIGUIENTE PASO</span><h3>Inscripciones y trámites</h3><p>Prepara tus documentos y revisa la información de Servicios Escolares.</p><a href="mapa.html?destino=servicios" class="text-link">Cómo llegar <i data-lucide="arrow-right"></i></a></div></article>
+      </div>
+      <div class="notice-card"><span class="notice-icon"><i data-lucide="info"></i></span><p><strong>Información de inscripciones:</strong> las fechas y requisitos pueden cambiar por periodo. Confirma los detalles vigentes directamente con Servicios Escolares.</p><a href="mapa.html?destino=servicios" aria-label="Ubicación de Servicios Escolares"><i data-lucide="arrow-up-right"></i></a></div>
+    </section>
+  </main>
 
-          <div
-            id="carouselGrid"
-            class="carousel-grid"
-          ></div>
-
-          <button
-            id="nextCard"
-            class="circle-button"
-            type="button"
-            aria-label="Siguiente"
-          >
-            ›
-          </button>
-
-        </div>
-
-        <div
-          id="carouselDots"
-          class="carousel-dots"
-          aria-label="Posición del carrusel"
-        ></div>
-
-      </section>
-
-      <section id="tramites" class="search-section">
-
-        <div class="search-row">
-
-          <div class="search-box-wrap">
-
-            <svg
-              class="search-icon"
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-
-            <input
-              id="mapSearch"
-              type="search"
-              placeholder="Buscar en el mapa…"
-              autocomplete="off"
-            />
-
-          </div>
-
-          <button
-            id="clearSearch"
-            class="clear-button hidden"
-            type="button"
-          >
-            Limpiar
-          </button>
-
-          <div
-            id="resultCount"
-            class="result-count"
-          >
-            19 ubicaciones
-          </div>
-
-        </div>
-
-        <div
-          id="legend"
-          class="legend"
-        ></div>
-
-      </section>
-
-      <section id="contacto" class="map-section">
-
-        <div class="section-heading-row">
-
-          <h2>
-            🗺️ Mapa del Campus ITIZ+
-          </h2>
-
-          <div class="zoom-controls">
-
-            <span id="zoomLabel">
-              Zoom 100%
-            </span>
-
-            <button
-              id="zoomOut"
-              class="small-button"
-              type="button"
-              aria-label="Alejar"
-            >
-              −
-            </button>
-
-            <button
-              id="zoomIn"
-              class="small-button"
-              type="button"
-              aria-label="Acercar"
-            >
-              +
-            </button>
-
-            <button
-              id="zoomReset"
-              class="reset-button hidden"
-              type="button"
-            >
-              Reset
-            </button>
-
-            <span class="touch-hint">
-              Toca para info
-            </span>
-
-          </div>
-
-        </div>
-
-        <div class="map-card">
-
-          <div
-            id="mapStage"
-            class="map-stage"
-            aria-label="Mapa interactivo del campus"
-          >
-
-            <div
-              id="mapTransform"
-              class="map-transform"
-            >
-
-              <img
-                id="campusMap"
-                src="mapa.png"
-                alt="Plano del campus ITIZ+"
-                draggable="false"
-              />
-
-              <div id="mapPins"></div>
-
-            </div>
-
-            <div
-              id="mapFallback"
-              class="map-fallback hidden"
-            >
-              No se encontró
-              <strong>mapa.png</strong>.
-              Coloca el archivo
-              <strong>mapa.png</strong>
-              en la misma carpeta que
-              <strong>index.html</strong>.
-            </div>
-
-          </div>
-
-          <div
-            id="infoPanel"
-            class="info-panel"
-          ></div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-    <footer class="footer">
-      © 2026 Instituto Tecnológico de Iztapalapa · ITIZ+ · Todos los derechos reservados
-    </footer>
-
-  </div>
-
-  <script src="script.js"></script>
+  <footer class="site-footer"><div class="page-width footer-inner"><a class="brand footer-brand" href="index.html"><span class="brand-mark">IT</span><span><strong>ITIZ<span class="brand-plus">+</span></strong><small>COMUNIDAD ESTUDIANTIL</small></span></a><p>Instituto Tecnológico de Iztapalapa · Ciudad de México</p><a href="mapa.html">Conoce tu campus <i data-lucide="arrow-up-right"></i></a></div></footer>
 </body>
 </html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102d52">
+  <meta name="description" content="Mapa interactivo del campus ITIZ+ con búsqueda de ubicaciones e indicaciones desde el acceso principal.">
+  <title>Mapa del campus | ITIZ+</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mapa.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-shell.js" defer></script>
+  <script src="mapa.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar page-width" aria-label="Navegación principal">
+      <a class="brand" href="index.html" aria-label="ITIZ+ inicio"><span class="brand-mark">IT</span><span><strong>ITIZ<span class="brand-plus">+</span></strong><small>INSTITUTO TECNOLÓGICO DE IZTAPALAPA</small></span></a>
+      <div class="nav-links"><a href="index.html">Inicio</a><a href="index.html#oferta">Oferta educativa</a><a class="is-current" href="mapa.html">Mapa del campus</a></div>
+      <div class="nav-actions"><button class="icon-button theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema"><i data-lucide="moon"></i></button><a class="account-link" href="login.html"><span class="avatar" data-avatar>IT</span><span data-account-label>Iniciar sesión</span></a><button class="icon-button menu-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false"><i data-lucide="menu"></i></button></div>
+    </nav>
+    <div class="mobile-nav page-width" hidden><a href="index.html">Inicio</a><a href="index.html#oferta">Oferta educativa</a><a href="mapa.html">Mapa del campus</a></div>
+  </header>
+
+  <main class="map-page page-width">
+    <section class="map-intro">
+      <div><span class="eyebrow eyebrow-dark">MUÉVETE POR TU CAMPUS</span><h1>Encuentra tu próximo destino.</h1><p>Elige cualquier origen y destino para consultar una ruta esquemática por el campus.</p></div>
+      <div class="map-start"><span class="start-marker"><i data-lucide="navigation"></i></span><span><small>ORIGEN ACTUAL</small><strong id="currentOriginLabel">Acceso peatonal principal</strong></span></div>
+    </section>
+
+    <section class="route-planner" aria-label="Planificador de ruta">
+      <label class="route-select-field" for="originSelect"><span><i data-lucide="circle-dot"></i> Punto de origen</span><select id="originSelect" aria-label="Selecciona el punto de origen"></select></label>
+      <button id="swapRoute" class="swap-route" type="button" aria-label="Invertir origen y destino" title="Invertir ruta"><i data-lucide="arrow-left-right"></i></button>
+      <label class="route-select-field" for="destinationSelect"><span><i data-lucide="map-pin"></i> Punto de destino</span><select id="destinationSelect" aria-label="Selecciona el punto de destino"></select></label>
+    </section>
+
+    <section class="map-tools" aria-label="Buscar y filtrar lugares">
+      <div class="map-search-wrap"><i data-lucide="search"></i><input id="locationSearch" type="search" placeholder="Buscar un destino…" autocomplete="off" aria-label="Buscar destinos: edificios, servicios o salones" aria-controls="searchSuggestions"><button id="clearSearch" class="clear-search" type="button" aria-label="Limpiar búsqueda" hidden><i data-lucide="x"></i></button><div id="searchSuggestions" class="search-suggestions" role="listbox" hidden></div></div>
+      <div class="filter-chips" aria-label="Filtros rápidos">
+        <button class="filter-chip" type="button" data-filter="food" aria-pressed="false"><span>🍔</span> Comida</button>
+        <button class="filter-chip" type="button" data-filter="admin" aria-pressed="false"><span>📋</span> Trámites</button>
+        <button class="filter-chip" type="button" data-filter="study" aria-pressed="false"><span>📚</span> Estudio</button>
+        <button class="filter-chip" type="button" data-filter="services" aria-pressed="false"><span>🚻</span> Servicios</button>
+      </div>
+    </section>
+
+    <section class="campus-card" aria-label="Mapa interactivo del campus">
+      <div class="map-toolbar"><div class="map-legend"><span><i class="legend-entry"></i> Origen</span><span><i class="legend-destination"></i> Destino</span></div><div class="map-controls"><span id="zoomLabel">100%</span><button type="button" id="zoomOut" aria-label="Alejar"><i data-lucide="minus"></i></button><button type="button" id="zoomIn" aria-label="Acercar"><i data-lucide="plus"></i></button><button type="button" id="zoomReset" aria-label="Restablecer vista"><i data-lucide="maximize-2"></i></button></div></div>
+      <div id="mapViewport" class="map-viewport" aria-label="Mapa del campus. Arrastra para explorar y selecciona un marcador para establecer el destino.">
+        <div id="mapCanvas" class="map-canvas">
+          <img class="campus-image" src="mapa.png" alt="Plano del campus ITIZ+, con edificios, salones y estacionamiento" draggable="false">
+          <svg id="routeLayer" class="route-layer" viewBox="0 0 1000 625" preserveAspectRatio="none" aria-hidden="true"><polyline id="routeLine" points=""></polyline></svg>
+          <div id="mapMarkers" class="map-markers"></div>
+        </div>
+        <div class="map-attribution">Plano esquemático del campus ITIZ+</div>
+      </div>
+      <div class="map-hint"><i data-lucide="hand"></i> Arrastra para explorar · Selecciona un marcador para usarlo como destino</div>
+    </section>
+
+    <section class="route-card" id="routeCard" aria-live="polite">
+      <div class="route-empty"><span class="route-empty-icon"><i data-lucide="route"></i></span><div><strong>Planea tu recorrido</strong><p>Selecciona un origen y un destino, o elige un marcador en el mapa.</p></div></div>
+    </section>
+    <p class="map-disclaimer">Este mapa es una guía visual esquemática. Las ubicaciones y los horarios pueden cambiar; confirma la información con el área correspondiente.</p>
+  </main>
+  <footer class="site-footer"><div class="page-width footer-inner"><a class="brand footer-brand" href="index.html"><span class="brand-mark">IT</span><span><strong>ITIZ<span class="brand-plus">+</span></strong><small>COMUNIDAD ESTUDIANTIL</small></span></a><p>Instituto Tecnológico de Iztapalapa · Ciudad de México</p><a href="index.html">Volver al inicio <i data-lucide="arrow-up-right"></i></a></div></footer>
+</body>
+</html>

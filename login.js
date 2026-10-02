@@ -1,398 +1,305 @@
-const SUPABASE_URL = 'https://hhwsqgohkqwbnthjbxdk.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_u_a3jaAL6pTh8v21tVIcaw_g9aGKW_m';
+(() => {
+  const client = window.itizSupabase;
+  const $ = (id) => document.getElementById(id);
+  const loginForm = $('loginForm');
+  const registerForm = $('registerForm');
+  const loginTab = $('loginTab');
+  const registerTab = $('registerTab');
+  const loginPanel = $('loginPanel');
+  const registerPanel = $('registerPanel');
+  const logoutButton = $('logoutButton');
+  const authMessage = $('authMessage');
+  const careerSelect = $('registerCareer');
 
-const { createClient } = window.supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-const $ = (id) => document.getElementById(id);
-
-const loginTab = $('loginTab');
-const registerTab = $('registerTab');
-const loginPanel = $('loginPanel');
-const registerPanel = $('registerPanel');
-const authTitle = $('authTitle');
-const authSubtitle = $('authSubtitle');
-const loginForm = $('loginForm');
-const registerForm = $('registerForm');
-const loginMessage = $('loginMessage');
-const registerMessage = $('registerMessage');
-const logoutButton = $('logoutButton');
-const recoverButton = $('recoverButton');
-const registerCareer = $('registerCareer');
-
-function setMessage(element, message = '', type = '') {
-  element.textContent = message;
-  element.className = 'auth-message';
-  if (type) element.classList.add(type);
-}
-
-function clearErrors(form) {
-  form.querySelectorAll('.field-error').forEach((node) => {
-    node.textContent = '';
+  const notify = (title, text, icon = 'info') => window.Swal.fire({
+    title,
+    text,
+    icon,
+    confirmButtonText: 'Entendido',
+    buttonsStyling: true
   });
-  form.querySelectorAll('.field-group').forEach((group) => {
-    group.classList.remove('invalid');
-  });
-}
 
-function fieldError(inputId, errorId, message) {
-  const input = $(inputId);
-  const error = $(errorId);
-  const group = input?.closest('.field-group');
-  if (error) error.textContent = message;
-  if (group) group.classList.add('invalid');
-}
-
-function setBusy(button, busy, busyText) {
-  if (!button) return;
-  if (busy) {
-    button.dataset.originalText = button.textContent;
-    button.textContent = busyText;
-    button.disabled = true;
-  } else {
-    button.textContent = button.dataset.originalText || button.textContent;
+  const normalize = (value) => value.trim().replace(/\s+/g, ' ');
+  const setBusy = (button, busy, label) => {
+    if (busy) {
+      button.dataset.originalHtml = button.innerHTML;
+      button.disabled = true;
+      button.textContent = label;
+      return;
+    }
     button.disabled = false;
-  }
-}
+    if (button.dataset.originalHtml) button.innerHTML = button.dataset.originalHtml;
+  };
 
-function switchTab(mode) {
-  const isLogin = mode === 'login';
+  const clearErrors = (form) => {
+    form.querySelectorAll('.field-error').forEach((field) => { field.textContent = ''; });
+    form.querySelectorAll('.field-group').forEach((group) => group.classList.remove('invalid'));
+  };
 
-  loginTab.classList.toggle('active', isLogin);
-  registerTab.classList.toggle('active', !isLogin);
-  loginTab.setAttribute('aria-selected', String(isLogin));
-  registerTab.setAttribute('aria-selected', String(!isLogin));
+  const showFieldError = (inputId, message) => {
+    const input = $(inputId);
+    const error = $(`${inputId}Error`);
+    input?.closest('.field-group')?.classList.add('invalid');
+    if (error) error.textContent = message;
+  };
 
-  loginPanel.hidden = !isLogin;
-  registerPanel.hidden = isLogin;
-  loginPanel.classList.toggle('active', isLogin);
-  registerPanel.classList.toggle('active', !isLogin);
+  const switchTab = (mode) => {
+    const isLogin = mode === 'login';
+    loginTab.classList.toggle('is-active', isLogin);
+    registerTab.classList.toggle('is-active', !isLogin);
+    loginTab.setAttribute('aria-selected', String(isLogin));
+    registerTab.setAttribute('aria-selected', String(!isLogin));
+    loginPanel.hidden = !isLogin;
+    registerPanel.hidden = isLogin;
+    authMessage.textContent = '';
+  };
 
-  authTitle.innerHTML = isLogin
-    ? 'Bienvenido a ITIZ<span>+</span>'
-    : 'Crea tu cuenta en ITIZ<span>+</span>';
+  const errorMessage = (error) => {
+    const message = String(error?.message || '').toLowerCase();
+    if (message.includes('invalid login credentials')) return 'El número de control/correo o la contraseña no son correctos.';
+    if (message.includes('email not confirmed')) return 'Confirma tu correo desde el enlace que enviamos antes de iniciar sesión.';
+    if (message.includes('user already registered') || message.includes('already been registered')) return 'Ya existe una cuenta registrada con ese correo.';
+    if (message.includes('duplicate key') || message.includes('matricula') || message.includes('número de control')) return 'Este número de control ya está registrado.';
+    if (message.includes('password should be at least')) return 'La contraseña no cumple con la longitud mínima configurada.';
+    if (message.includes('rate limit')) return 'Se alcanzó el límite temporal de intentos. Espera un momento e inténtalo de nuevo.';
+    if (message.includes('failed to fetch') || message.includes('network')) return 'No se pudo conectar con Supabase. Revisa tu conexión a internet.';
+    if (message.includes('database error saving new user')) return 'No se pudo completar el registro. El número de control quizá ya está registrado o falta configurar el trigger de alumnos en Supabase.';
+    return error?.message || 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+  };
 
-  authSubtitle.textContent = isLogin
-    ? 'Inicia sesión con tu número de control o correo institucional.'
-    : 'Registra tus datos para crear tu cuenta de acceso.';
+  const loadCareers = async () => {
+    if (!client) throw new Error('La conexión de Supabase no está disponible.');
+    const { data, error } = await client.from('carreras').select('id, clave, nombre').order('nombre', { ascending: true });
+    if (error) throw error;
+    if (!data?.length) throw new Error('No hay carreras disponibles. Verifica que la tabla carreras tenga registros.');
+    careerSelect.replaceChildren(new Option('Selecciona una carrera', ''));
+    data.forEach((career) => {
+      careerSelect.add(new Option(career.clave ? `${career.clave} — ${career.nombre}` : career.nombre, String(career.id)));
+    });
+  };
 
-  setMessage(loginMessage);
-  setMessage(registerMessage);
-}
+  const findEmailByMatricula = async (matricula) => {
+    const { data, error } = await client.rpc('get_auth_email_by_matricula', { p_matricula: matricula });
+    if (!error) return typeof data === 'string' && data.includes('@') ? data : null;
 
-function currentAuthPageUrl() {
-  return window.location.href.split('#')[0];
-}
+    console.warn('No se pudo utilizar get_auth_email_by_matricula; se intentará la consulta protegida de respaldo.', error.message);
+    const fallback = await client.from('alumnos').select('correo').eq('matricula', matricula).maybeSingle();
+    if (fallback.error) {
+      throw new Error(`No se pudo resolver el número de control. Ejecuta la función RPC get_auth_email_by_matricula en Supabase. ${fallback.error.message}`);
+    }
+    return typeof fallback.data?.correo === 'string' ? fallback.data.correo : null;
+  };
 
-function normalizeText(value) {
-  return value.trim().replace(/\s+/g, ' ');
-}
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    clearErrors(loginForm);
+    const identifier = normalize($('loginIdentifier').value);
+    const password = $('loginPassword').value;
+    let valid = true;
+    if (!identifier) {
+      showFieldError('loginIdentifier', 'Ingresa tu número de control o correo.');
+      valid = false;
+    }
+    if (!password) {
+      showFieldError('loginPassword', 'Ingresa tu contraseña.');
+      valid = false;
+    }
+    if (!valid) return;
 
-function translateSupabaseError(error) {
-  const message = String(error?.message || '').toLowerCase();
-
-  if (message.includes('invalid login credentials')) {
-    return 'Número de control/correo o contraseña incorrectos.';
-  }
-  if (message.includes('email not confirmed')) {
-    return 'Tu correo aún no está confirmado. Revisa tu bandeja de entrada.';
-  }
-  if (message.includes('user already registered')) {
-    return 'Ya existe una cuenta con ese correo.';
-  }
-  if (message.includes('password should be at least')) {
-    return 'La contraseña no cumple la longitud mínima configurada en Supabase.';
-  }
-  if (message.includes('rate limit')) {
-    return 'Se alcanzó temporalmente el límite de intentos. Espera un momento y vuelve a intentar.';
-  }
-  if (message.includes('failed to fetch')) {
-    return 'No se pudo conectar con Supabase. Verifica tu conexión a internet.';
-  }
-
-  return error?.message || 'Ocurrió un error inesperado.';
-}
-
-async function loadCareers() {
-  registerCareer.innerHTML = '<option value="">Cargando carreras…</option>';
-
-  const { data, error } = await supabaseClient
-    .from('carreras')
-    .select('id, clave, nombre')
-    .order('nombre', { ascending: true });
-
-  if (error) {
-    registerCareer.innerHTML = '<option value="">No se pudieron cargar</option>';
-    setMessage(registerMessage, `No se pudieron cargar las carreras: ${translateSupabaseError(error)}`, 'error');
-    return;
-  }
-
-  if (!data?.length) {
-    registerCareer.innerHTML = '<option value="">No hay carreras disponibles</option>';
-    return;
-  }
-
-  registerCareer.innerHTML = '<option value="">Selecciona una carrera</option>';
-  data.forEach((career) => {
-    const option = document.createElement('option');
-    option.value = String(career.id);
-    option.textContent = career.clave ? `${career.clave} — ${career.nombre}` : career.nombre;
-    registerCareer.appendChild(option);
-  });
-}
-
-async function emailFromMatricula(matricula) {
-  const { data, error } = await supabaseClient.rpc('get_auth_email_by_matricula', {
-    p_matricula: matricula
-  });
-
-  if (error) throw error;
-  return typeof data === 'string' ? data : null;
-}
-
-async function handleLogin(event) {
-  event.preventDefault();
-  clearErrors(loginForm);
-  setMessage(loginMessage);
-
-  const identifier = normalizeText($('loginIdentifier').value);
-  const password = $('loginPassword').value;
-
-  let valid = true;
-
-  if (!identifier) {
-    fieldError('loginIdentifier', 'loginIdentifierError', 'Ingresa tu número de control o correo.');
-    valid = false;
-  }
-
-  if (!password) {
-    fieldError('loginPassword', 'loginPasswordError', 'Ingresa tu contraseña.');
-    valid = false;
-  }
-
-  if (!valid) return;
-
-  const submit = $('loginSubmit');
-  setBusy(submit, true, 'Entrando…');
-
-  try {
-    let email = identifier;
-
-    if (!identifier.includes('@')) {
-      email = await emailFromMatricula(identifier);
+    const submit = $('loginSubmit');
+    setBusy(submit, true, 'Verificando acceso…');
+    try {
+      const email = identifier.includes('@') ? identifier : await findEmailByMatricula(identifier);
       if (!email) {
-        setMessage(loginMessage, 'No encontramos una cuenta con ese número de control.', 'error');
+        await notify('Cuenta no encontrada', 'No encontramos una cuenta asociada a ese número de control.', 'warning');
         return;
       }
-    }
-
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      setMessage(loginMessage, translateSupabaseError(error), 'error');
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      authMessage.textContent = 'Acceso correcto. Abriendo tu portal…';
+      window.location.assign('index.html');
       return;
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      await notify('No pudimos iniciar sesión', errorMessage(error), 'error');
+    } finally {
+      setBusy(submit, false);
     }
+  };
 
-    setMessage(loginMessage, 'Inicio de sesión correcto. Redirigiendo…', 'success');
-    window.location.href = 'index.html';
-  } catch (error) {
-    console.error(error);
-    setMessage(loginMessage, translateSupabaseError(error), 'error');
-  } finally {
-    setBusy(submit, false);
-  }
-}
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    clearErrors(registerForm);
+    const matricula = normalize($('registerMatricula').value);
+    const fullName = normalize($('registerFullName').value);
+    const email = normalize($('registerEmail').value).toLowerCase();
+    const careerId = careerSelect.value;
+    const careerName = careerSelect.selectedOptions[0]?.textContent?.replace(/^[^—]+—\s*/, '') || '';
+    const semester = Number($('registerSemester').value);
+    const password = $('registerPassword').value;
+    const passwordConfirm = $('registerPasswordConfirm').value;
+    let valid = true;
 
-async function handleRegister(event) {
-  event.preventDefault();
-  clearErrors(registerForm);
-  setMessage(registerMessage);
+    if (!matricula) { showFieldError('registerMatricula', 'Ingresa tu número de control.'); valid = false; }
+    if (fullName.length < 3) { showFieldError('registerFullName', 'Escribe tu nombre completo.'); valid = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('registerEmail', 'Escribe un correo institucional válido.'); valid = false; }
+    if (!careerId) { showFieldError('registerCareer', 'Selecciona tu carrera.'); valid = false; }
+    if (!Number.isInteger(semester) || semester < 1 || semester > 12) { showFieldError('registerSemester', 'Selecciona un semestre válido.'); valid = false; }
+    if (password.length < 6) { showFieldError('registerPassword', 'La contraseña debe tener al menos 6 caracteres.'); valid = false; }
+    if (password !== passwordConfirm) { showFieldError('registerPasswordConfirm', 'Las contraseñas no coinciden.'); valid = false; }
+    if (!valid) return;
 
-  const nombre = normalizeText($('registerName').value);
-  const matricula = normalizeText($('registerMatricula').value);
-  const apellidoPaterno = normalizeText($('registerApellidoPaterno').value);
-  const apellidoMaterno = normalizeText($('registerApellidoMaterno').value);
-  const correo = normalizeText($('registerEmail').value).toLowerCase();
-  const carreraId = $('registerCareer').value;
-  const semestre = Number($('registerSemester').value);
-  const password = $('registerPassword').value;
-  const passwordConfirm = $('registerPasswordConfirm').value;
-
-  let valid = true;
-
-  if (nombre.length < 2) {
-    fieldError('registerName', 'registerNameError', 'Escribe tu nombre.');
-    valid = false;
-  }
-  if (!matricula) {
-    fieldError('registerMatricula', 'registerMatriculaError', 'Ingresa tu número de control.');
-    valid = false;
-  }
-  if (!apellidoPaterno) {
-    fieldError('registerApellidoPaterno', 'registerApellidoPaternoError', 'Ingresa tu apellido paterno.');
-    valid = false;
-  }
-  if (!apellidoMaterno) {
-    fieldError('registerApellidoMaterno', 'registerApellidoMaternoError', 'Ingresa tu apellido materno.');
-    valid = false;
-  }
-  if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-    fieldError('registerEmail', 'registerEmailError', 'Escribe un correo electrónico válido.');
-    valid = false;
-  }
-  if (!carreraId) {
-    fieldError('registerCareer', 'registerCareerError', 'Selecciona tu carrera.');
-    valid = false;
-  }
-  if (!Number.isInteger(semestre) || semestre < 1) {
-    fieldError('registerSemester', 'registerSemesterError', 'Selecciona tu semestre.');
-    valid = false;
-  }
-  if (password.length < 6) {
-    fieldError('registerPassword', 'registerPasswordError', 'La contraseña debe tener al menos 6 caracteres.');
-    valid = false;
-  }
-  if (password !== passwordConfirm) {
-    fieldError('registerPasswordConfirm', 'registerPasswordConfirmError', 'Las contraseñas no coinciden.');
-    valid = false;
-  }
-
-  if (!valid) return;
-
-  const submit = $('registerSubmit');
-  setBusy(submit, true, 'Creando cuenta…');
-
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email: correo,
-      password,
-      options: {
-        emailRedirectTo: currentAuthPageUrl(),
-        data: {
-          matricula,
-          nombre,
-          apellido_paterno: apellidoPaterno,
-          apellido_materno: apellidoMaterno,
-          carrera_id: Number(carreraId),
-          semestre_actual: semestre
-        }
+    const submit = $('registerSubmit');
+    setBusy(submit, true, 'Creando cuenta…');
+    try {
+      const existingEmail = await findEmailByMatricula(matricula);
+      if (existingEmail) {
+        await notify('Número de control ya registrado', 'Ya hay una cuenta vinculada a este número de control. Inicia sesión o recupera tu contraseña.', 'warning');
+        return;
       }
-    });
 
-    if (error) {
-      setMessage(registerMessage, translateSupabaseError(error), 'error');
-      return;
-    }
+      const [nombre, ...apellidos] = fullName.split(' ');
+      const { data, error } = await client.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+          data: {
+            matricula,
+            nombre,
+            apellido_paterno: apellidos.shift() || '',
+            apellido_materno: apellidos.join(' '),
+            nombre_completo: fullName,
+            carrera_id: Number(careerId),
+            carrera_nombre: careerName,
+            semestre_actual: semester
+          }
+        }
+      });
+      if (error) throw error;
+      if (data.user?.identities?.length === 0) {
+        await notify('Correo ya registrado', 'Ya existe una cuenta con ese correo. Inicia sesión o recupera tu contraseña.', 'warning');
+        return;
+      }
 
-    if (data?.session) {
-      setMessage(registerMessage, 'Cuenta creada correctamente. Redirigiendo…', 'success');
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 900);
-    } else {
-      setMessage(
-        registerMessage,
-        'Cuenta creada. Revisa tu correo para confirmar la cuenta y después inicia sesión.',
-        'success'
-      );
+      if (data.session) {
+        await window.Swal.fire({
+          title: '¡Registro exitoso!',
+          text: 'Tu cuenta estudiantil está lista. Te llevaremos a ITIZ+.',
+          icon: 'success',
+          confirmButtonText: 'Continuar'
+        });
+        window.location.assign('index.html');
+        return;
+      }
+
       registerForm.reset();
       await loadCareers();
+      switchTab('login');
+      await notify('¡Registro exitoso!', 'Revisa tu correo institucional y confirma tu cuenta antes de iniciar sesión.', 'success');
+    } catch (error) {
+      console.error('Error al registrar cuenta:', error);
+      await notify('No pudimos completar el registro', errorMessage(error), 'error');
+    } finally {
+      setBusy(submit, false);
     }
-  } catch (error) {
-    console.error(error);
-    setMessage(registerMessage, translateSupabaseError(error), 'error');
-  } finally {
-    setBusy(submit, false);
-  }
-}
+  };
 
-async function handleRecovery() {
-  clearErrors(loginForm);
-  setMessage(loginMessage);
-
-  const identifier = normalizeText($('loginIdentifier').value);
-
-  if (!identifier) {
-    fieldError('loginIdentifier', 'loginIdentifierError', 'Escribe primero tu correo o número de control.');
-    return;
-  }
-
-  try {
-    let email = identifier;
-
-    if (!identifier.includes('@')) {
-      email = await emailFromMatricula(identifier);
-      if (!email) {
-        setMessage(loginMessage, 'No encontramos una cuenta con ese número de control.', 'error');
-        return;
-      }
-    }
-
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: currentAuthPageUrl()
-    });
-
-    if (error) {
-      setMessage(loginMessage, translateSupabaseError(error), 'error');
+  const handleRecovery = async () => {
+    clearErrors(loginForm);
+    const identifier = normalize($('loginIdentifier').value);
+    if (!identifier) {
+      showFieldError('loginIdentifier', 'Escribe tu correo o número de control para recuperar el acceso.');
       return;
     }
+    try {
+      const email = identifier.includes('@') ? identifier : await findEmailByMatricula(identifier);
+      if (!email) {
+        await notify('Cuenta no encontrada', 'No encontramos una cuenta asociada a ese número de control.', 'warning');
+        return;
+      }
+      const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}${window.location.pathname}`
+      });
+      if (error) throw error;
+      await notify('Revisa tu correo', 'Te enviamos un enlace para restablecer tu contraseña.', 'success');
+    } catch (error) {
+      console.error('Error al solicitar recuperación:', error);
+      await notify('No pudimos enviar el enlace', errorMessage(error), 'error');
+    }
+  };
 
-    setMessage(loginMessage, 'Te enviamos un enlace de recuperación al correo asociado.', 'success');
-  } catch (error) {
-    console.error(error);
-    setMessage(loginMessage, translateSupabaseError(error), 'error');
-  }
-}
-
-async function handleLogout() {
-  const { error } = await supabaseClient.auth.signOut();
-  if (error) {
-    setMessage(loginMessage, translateSupabaseError(error), 'error');
-    return;
-  }
-  logoutButton.classList.add('hidden');
-  setMessage(loginMessage, 'Sesión cerrada correctamente.', 'success');
-}
-
-async function refreshSessionState() {
-  const { data } = await supabaseClient.auth.getSession();
-  logoutButton.classList.toggle('hidden', !data?.session);
-}
-
-function bindPasswordToggles() {
-  document.querySelectorAll('[data-toggle-password]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const input = $(button.dataset.togglePassword);
-      if (!input) return;
-      const isPassword = input.type === 'password';
-      input.type = isPassword ? 'text' : 'password';
-      button.textContent = isPassword ? 'Ocultar' : 'Mostrar';
+  const handleLogout = async () => {
+    const confirmation = await window.Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: 'Se cerrará tu sesión de ITIZ+ en este dispositivo.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Cerrar sesión',
+      cancelButtonText: 'Seguir aquí',
+      reverseButtons: true
     });
-  });
-}
+    if (!confirmation.isConfirmed) return;
+    logoutButton.disabled = true;
+    try {
+      const { error } = await client.auth.signOut();
+      if (error) throw error;
+      logoutButton.hidden = true;
+      await notify('Sesión cerrada', 'Tu cuenta salió de este dispositivo.', 'success');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      await notify('No pudimos cerrar la sesión', errorMessage(error), 'error');
+    } finally {
+      logoutButton.disabled = false;
+    }
+  };
 
-function bindTabs() {
-  loginTab.addEventListener('click', () => switchTab('login'));
-  registerTab.addEventListener('click', () => switchTab('register'));
-}
+  const bindPasswordToggles = () => {
+    document.querySelectorAll('[data-toggle-password]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = $(button.dataset.togglePassword);
+        if (!input) return;
+        const visible = input.type === 'password';
+        input.type = visible ? 'text' : 'password';
+        button.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        button.innerHTML = `<i data-lucide="${visible ? 'eye-off' : 'eye'}"></i>`;
+        window.lucide?.createIcons();
+      });
+    });
+  };
 
-async function init() {
-  bindTabs();
-  bindPasswordToggles();
-  loginForm.addEventListener('submit', handleLogin);
-  registerForm.addEventListener('submit', handleRegister);
-  recoverButton.addEventListener('click', handleRecovery);
-  logoutButton.addEventListener('click', handleLogout);
+  const init = async () => {
+    if (!client) {
+      await notify('Servicio no disponible', 'No se pudo inicializar Supabase. Recarga la página e inténtalo de nuevo.', 'error');
+      return;
+    }
+    loginTab.addEventListener('click', () => switchTab('login'));
+    registerTab.addEventListener('click', () => switchTab('register'));
+    loginForm.addEventListener('submit', handleLogin);
+    registerForm.addEventListener('submit', handleRegister);
+    $('recoverButton').addEventListener('click', handleRecovery);
+    logoutButton.addEventListener('click', handleLogout);
+    bindPasswordToggles();
 
-  await loadCareers();
-  await refreshSessionState();
+    try {
+      await loadCareers();
+    } catch (error) {
+      console.error('No se pudieron cargar las carreras:', error);
+      careerSelect.replaceChildren(new Option('Carreras no disponibles', ''));
+      await notify('No se pudieron cargar las carreras', errorMessage(error), 'error');
+    }
 
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    logoutButton.classList.toggle('hidden', !session);
-  });
-}
+    const { data, error } = await client.auth.getSession();
+    if (error) {
+      console.error('No se pudo recuperar la sesión:', error);
+      await notify('No se pudo revisar tu sesión', errorMessage(error), 'error');
+      return;
+    }
+    logoutButton.hidden = !data.session;
+    client.auth.onAuthStateChange((_event, session) => {
+      logoutButton.hidden = !session;
+    });
+  };
 
-document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init);
+})();
