@@ -1,0 +1,96 @@
+/* Estilos independientes para Oferta Educativa */
+.oferta-educativa {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: sans-serif;
+}
+
+.oferta-header {
+    margin-bottom: 30px;
+}
+
+.etiqueta-sub {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #2e7d32;
+    letter-spacing: 1px;
+}
+
+.oferta-header h2 {
+    font-size: 2.2rem;
+    color: #0f172a;
+    margin: 10px 0;
+}
+
+.oferta-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.carreras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    border-radius: 20px;
+    padding: 30px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 280px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-sistemas {
+    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+}
+
+.card-mecatronica {
+    background: linear-gradient(135deg, #065f46, #047857);
+}
+
+.card-gestion {
+    background: linear-gradient(135deg, #581c87, #7e22ce);
+}
+
+.badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.card-content h3 {
+    font-size: 1.5rem;
+    margin: 15px 0 10px 0;
+}
+
+.card-content p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.card-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferta Educativa - ITIZ</title>
+    
+    <!-- Hojas de estilo -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="carreras.css">
+    
+    <!-- Librería de iconos y scripts generales del proyecto -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="app-shell.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <!-- 1. BARRA DE NAVEGACIÓN SUPERIOR (Para que se vea en esta pestaña) -->
+    <header class="site-header">
+        <nav class="navbar page-width" aria-label="Navegación principal">
+            <a class="brand" href="index.html" aria-label="ITIZ+ inicio">
+                <span class="brand-mark">IT</span>
+                <span><strong>ITIZ<span class="brand-plus">+</span></strong><small>INSTITUTO TECNOLÓGICO DE IZTAPALAPA</small></span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Inicio</a>
+                <a class="is-current" href="carreras.html">Oferta educativa</a>
+                <a href="index.html#actividades">Actividades</a>
+                <a href="mapa.html">Mapa del campus</a>
+            </div>
+            <div class="nav-actions">
+                <button class="icon-button theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema"><i data-lucide="moon"></i></button>
+                <a class="account-link" href="login.html"><span class="avatar" data-avatar>IT</span><span data-account-label>Iniciar sesión</span></a>
+                <button class="icon-button menu-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false"><i data-lucide="menu"></i></button>
+            </div>
+        </nav>
+        <div class="mobile-nav page-width" hidden>
+            <a href="index.html">Inicio</a>
+            <a href="carreras.html">Oferta educativa</a>
+            <a href="index.html#actividades">Actividades</a>
+            <a href="mapa.html">Mapa del campus</a>
+        </div>
+    </header>
+
+    <!-- 2. CONTENIDO PRINCIPAL (Tus tarjetas de carreras que me pasaste) -->
+    <main>
+        <section class="oferta-educativa" id="oferta-educativa" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+            <div class="oferta-header">
+                <span class="etiqueta-sub">CRECE A TU MANERA</span>
+                <h2>Descubre lo que te mueve</h2>
+                <p>Formación, experiencias y herramientas para construir tu futuro.</p>
+            </div>
+
+            <!-- Contenedor de las tarjetas de las carreras -->
+            <div class="carreras-grid">
+                
+                <!-- Tarjeta 1: Sistemas Computacionales -->
+                <div class="card card-sistemas">
+                    <div class="card-content">
+                        <span class="badge">INGENIERÍA</span>
+                        <h3>Sistemas Computacionales</h3>
+                        <p>Software, datos e ideas que conectan al mundo.</p>
+                    </div>
+                    <a href="#" class="card-link">Explorar carrera ↗</a>
+                </div>
+
+                <!-- Tarjeta 2: Ingeniería Mecatrónica -->
+                <div class="card card-mecatronica">
+                    <div class="card-content">
+                        <span class="badge">INGENIERÍA</span>
+                        <h3>Ingeniería Mecatrónica</h3>
+                        <p>Diseña soluciones inteligentes para los retos reales.</p>
+                    </div>
+                    <a href="#" class="card-link">Explorar carrera ↗</a>
+                </div>
+
+                <!-- Tarjeta 3: Gestión Empresarial -->
+                <div class="card card-gestion">
+                    <div class="card-content">
+                        <span class="badge">LICENCIATURA</span>
+                        <h3>Gestión Empresarial</h3>
+                        <p>Impulsa proyectos, organizaciones y nuevas ideas.</p>
+                    </div>
+                    <a href="#" class="card-link">Explorar carrera ↗</a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- 3. PIE DE PÁGINA -->
+    <footer class="site-footer">
+        <div class="page-width footer-inner">
+            <a class="brand footer-brand" href="index.html">
+                <span class="brand-mark">IT</span>
+                <span><strong>ITIZ<span class="brand-plus">+</span></strong><small>COMUNIDAD ESTUDIANTIL</small></span>
+            </a>
+            <p>Instituto Tecnológico de Iztapalapa · Ciudad de México</p>
+            <a href="mapa.html">Conoce tu campus <i data-lucide="arrow-up-right"></i></a>
+        </div>
+    </footer>
+
+</body>
+</html>
